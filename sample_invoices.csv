@@ -1,0 +1,8 @@
+invoice_number,supplier,invoice_date,subtotal,vat,invoice_total
+INV-001,ABC Supplies,2026-10-01,1000.00,150.00,1150.00
+INV-002,Office Solutions,2026-10-02,500.00,75.00,575.00
+INV-003,XYZ Services,2026-10-03,800.00,120.00,950.00
+INV-004,ABC Supplies,2026-10-01,1000.00,150.00,1150.00
+,Fresh Foods,2026-10-04,300.00,45.00,345.00
+INV-005,,2026-10-05,200.00,30.00,230.00
+INV-006,Tech Store,2026-10-06,400.00,60.00,460.00
