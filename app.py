@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from invoice_validator import validate_invoices
 
 st.set_page_config(
     page_title="AI Bookkeeping Review Assistant",
@@ -14,10 +15,7 @@ st.write(
     "identify discrepancies and improve financial accuracy."
 )
 
-st.info(
-    "This is an early prototype. All uploaded information should be "
-    "fictional test data, not real client or financial records."
-)
+st.info("This is an early prototype. Use fictional test data only.")
 
 st.header("Invoice Upload")
 
@@ -32,31 +30,38 @@ if uploaded_file is not None:
 
         st.success("File uploaded successfully!")
 
-        st.subheader("Invoice Records")
+        st.subheader("Original Invoice Records")
         st.dataframe(invoices, use_container_width=True)
 
-        st.write(f"**Total records uploaded:** {len(invoices)}")
+        st.header("Invoice Validation")
+
+        reviewed_invoices = validate_invoices(invoices)
+
+        total_invoices = len(reviewed_invoices)
+        flagged_invoices = (
+            reviewed_invoices["Review Status"] == "Needs Review"
+        ).sum()
+        ready_invoices = (
+            reviewed_invoices["Review Status"] == "Ready for Review"
+        ).sum()
+
+        col1, col2, col3 = st.columns(3)
+
+        col1.metric("Total Invoices", total_invoices)
+        col2.metric("Needs Review", int(flagged_invoices))
+        col3.metric("Ready for Review", int(ready_invoices))
+
+        st.subheader("Validation Results")
+        st.dataframe(reviewed_invoices, use_container_width=True)
 
     except Exception as error:
-        st.error(f"Unable to read this file: {error}")
+        st.error(f"Unable to process this file: {error}")
 
 else:
-    st.write("No invoice file uploaded yet.")
-
-st.header("Invoice Review")
-
-sample_data = {
-    "Invoice Number": ["INV-001", "INV-002", "INV-003"],
-    "Supplier": ["ABC Supplies", "Office Solutions", "XYZ Services"],
-    "Invoice Total": [1250.00, 875.50, 2100.00],
-    "Review Status": ["Matched", "Needs Review", "Pending"]
-}
-
-review_data = pd.DataFrame(sample_data)
-
-st.dataframe(review_data, use_container_width=True)
+    st.write("Upload a CSV file to begin invoice validation.")
 
 st.caption(
-    "Future features: invoice matching, duplicate detection, "
-    "discrepancy alerts and human approval."
+    "Future features: AI invoice extraction, transaction matching "
+    "and human approval."
 )
+        
